@@ -577,14 +577,8 @@ class _DrawerPageState extends State<DrawerPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ListTile(
-                    title: const Icon(
-                        Icons.arrow_back,
-                      color: Colors.white,
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
+                  SizedBox(
+                    height: 120*heightR,
                   ),
                   Padding(
                     padding:  EdgeInsets.all(8.0*heightR),

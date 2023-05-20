@@ -203,15 +203,10 @@ class _HomeState extends State<Home> {
         }
         i++;
       }
-      for(int j = 0; j < list_warning_1.length; j++){
-        if(j == 0){
-          list_warning.add(list_warning_1[j]);
-          list_time.add(list_time_1[j]);
-          continue;
-        }
-        if(list_warning_1[j] != list_warning_1[j-1] && j != 0){
-          list_warning.add(list_warning_1[j]);
-          list_time.add(list_time_1[j]);
+      for (int i = 0; i < list_warning_1.length; i++) {
+        if (i == list_warning_1.length - 1 || list_warning_1[i] != list_warning_1[i + 1]) {
+          list_warning.add(list_warning_1[i]);
+          list_time.add(list_time_1[i]);
         }
       }
     } catch (e) {

@@ -169,7 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 children: [
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text_title(data: 'MOS Temp:'),
                                       Text_title(data: 'Battery Capacity:'),
@@ -289,7 +289,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 20*heightR,),
                                 Container(
@@ -402,7 +402,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ),
                                     child: TextButton(
                                       child:  Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                           color: Colors.white,
                                         ),
@@ -456,7 +456,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -472,7 +472,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ),
                                     child: TextButton(
                                       child:  Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                           color: Colors.white,
                                         ),
@@ -522,7 +522,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -577,7 +577,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(height: 20*heightR,),
                                 Container(
@@ -887,7 +887,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -922,7 +922,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -957,7 +957,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -992,7 +992,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1027,7 +1027,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1062,7 +1062,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1097,7 +1097,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1132,7 +1132,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1167,7 +1167,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1202,7 +1202,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1237,7 +1237,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),
@@ -1272,7 +1272,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         ).show();
                                       },
                                       child: Text(
-                                        "Ok",
+                                        "OK",
                                         style: TextStyle(
                                             color: Colors.white
                                         ),

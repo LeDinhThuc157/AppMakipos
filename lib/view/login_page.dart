@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'create_user.dart';
 import 'home.dart';
 
 
@@ -75,6 +76,7 @@ class _SignPageState extends State<SignPage> {
   @override
   void initState(){
     super.initState();
+    _GetDataSave();
     // _GetDataSave();
     // _statusCode == null ? 1 : _statusCode;
     // _SaveLogin();
@@ -83,11 +85,11 @@ class _SignPageState extends State<SignPage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(name, data);
   }
-  Read_() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var counter = prefs.getString('List_Cell');
-    print('$counter');
-  }
+  // Read_() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   var counter = prefs.getString('List_Cell');
+  //   print('$counter');
+  // }
 
   // Future<String?> _Username() async => dataname = _localStorage['username'];
   // Future<String?> _Password() async => datapass = _localStorage['password'];
@@ -95,16 +97,16 @@ class _SignPageState extends State<SignPage> {
 
 
 
-  // _GetDataSave(){
-  //   _Username();
-  //   _Password();
-  //   _Status();
-    // setState(() {
-    //   dataname != null ? nameController.text = dataname! : "";
-    //   datapass != null ? passwordController.text = datapass! : "";
-    // });
-  //
-  // }
+  _GetDataSave() async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      dataname = prefs.getString('username');
+      datapass = prefs.getString('password');
+    setState(() {
+      dataname != null ? nameController.text = dataname! : "";
+      datapass != null ? passwordController.text = datapass! : "";
+    });
+
+  }
 
 
 
@@ -229,10 +231,9 @@ class _SignPageState extends State<SignPage> {
                             style: TextStyle(fontSize: 120*curR),
                           ),
                           onPressed: () {
-                            Read_();
-                            // Navigator.push(context, MaterialPageRoute(
-                            //   builder: (context) => CreateUser(),
-                            // ));
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => CreateUser(),
+                            ));
                           },
                         )
                     ),

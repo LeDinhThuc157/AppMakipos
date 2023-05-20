@@ -64,7 +64,7 @@ class _AlarmPageState extends State<AlarmPage>{
                       child: Container(
                         child: Text(widget.list_warning[index],
                           style: TextStyle(
-                            fontSize: 24 * heightR,
+                            fontSize: 20 * heightR,
                             color: Colors.red,
                             fontWeight: FontWeight.bold,
                           ),

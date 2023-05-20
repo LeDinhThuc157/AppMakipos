@@ -121,7 +121,10 @@ class _StatusPageState extends State<StatusPage> {
                 ),
                 Container(
                   height: 150*heightR,
-                  color: mainColor,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.black54
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -221,7 +224,7 @@ class _StatusPageState extends State<StatusPage> {
                                 children: [
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text_title(data: 'MOS Temp:'),
                                       Text_title(data: 'Battery Capacity:'),
