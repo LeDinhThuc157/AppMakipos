@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:makipos/main.dart';
+import 'package:makipos/method/method_http.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:dio/dio.dart';
 import '../widgets/bottombar_item.dart';
 import '../theme/colors.dart';
 import 'Alarm_tab.dart';
@@ -24,7 +27,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int activeTab = 0;
-
+  bool bool_admin = false;
   @override
   Widget build(BuildContext context) {
     // print("Home Token: $_token");
@@ -65,6 +68,54 @@ class _HomeState extends State<Home> {
         },
       ),
     );
+  }
+  call_bool_admin() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool_admin = prefs.getBool('bool_admin')!;
+    // print('$bool_admin' '\n' 'Check first');
+  }
+  save(var data, var name) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(name, data);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    call_bool_admin();
+    Get_Data();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // Khi màn hình hiện tại đã được xây dựng
+      // Đăng ký lắng nghe sự kiện chuyển màn hình
+      final timerState = Provider.of<TimerState>(context, listen: false);
+      timerState.addListener(() {
+        if (!timerState.timerActive) {
+          print("Dung 2");
+          _stopTimer(); // Dừng Timer khi trạng thái thay đổi
+        }
+      });
+    });
+
+  }
+  var _timer;
+  void Get_Data() {
+    _timer = Timer.periodic(Duration(seconds: 30), (Timer t) async {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (mounted) { // Kiểm tra nếu widget vẫn còn mounted (không bị hủy)
+        // Gọi hàm postDataControl() và save() ở đây
+        String id_device = prefs.getString('Id_device')!;
+        get(id_device);
+        print("Call api \n  ${DateTime.now()}");
+      }
+    });
+  }
+
+  void _stopTimer() {
+    if (_timer != null) {
+      _timer.cancel(); // Hủy Timer
+      _timer = null;
+      print("Huy Timer khi thoat");
+    }
   }
 
   Widget getBottomBar() {
@@ -111,7 +162,7 @@ class _HomeState extends State<Home> {
                       });
                     },
                   ),
-                  BottomBarItem(
+                  bool_admin ? BottomBarItem(
                     Icons.settings,
                     "SETTINGS",
                     isActive: activeTab == 1,
@@ -121,8 +172,14 @@ class _HomeState extends State<Home> {
                         activeTab = 1;
                       });
                     },
+                  ) : Column(
+                    children: [
+
+                      new Icon(Icons.settings, size: 54*heightR, color: secondary.withOpacity(.4),),
+                      Text("SETTINGS", style: TextStyle(fontSize: 22*heightR, color: red_alarm.withOpacity(.5))),
+                    ],
                   ),
-                  BottomBarItem(
+                  bool_admin ? BottomBarItem(
                     Icons.swap_horiz,
                     "CONTROL",
                     isActive: activeTab == 2,
@@ -132,20 +189,24 @@ class _HomeState extends State<Home> {
                         activeTab = 2;
                       });
                     },
+                  ) : Column(
+                    children: [
+
+                      new Icon(Icons.swap_horiz, size: 54*heightR, color: secondary.withOpacity(.4),),
+                      Text("CONTROL", style: TextStyle(fontSize: 22*heightR, color: red_alarm.withOpacity(.5))),
+                    ],
                   ),
                   BottomBarItem(
                     Icons.notification_important_outlined,
                     "ALARM",
                     isActive: activeTab == 3,
-                    activeColor: red_alarm,
+                    activeColor: secondary,
                     onTap: () {
                       setState(() {
                         activeTab = 3;
                       });
                     },
-                  ),
-
-
+                  )
                 ]
             )
         ),
@@ -162,6 +223,7 @@ class _HomeState extends State<Home> {
   var list_time = [];
   var list_warning_1=[];
   var list_time_1 = [] ;
+
   get_list_warning() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var token = prefs.getString('Token');
@@ -216,7 +278,7 @@ class _HomeState extends State<Home> {
   }
 
 
-  Widget getBarPage(){
+  Widget getBarPage() {
     return IndexedStack(
       index: activeTab,
       children: <Widget>[

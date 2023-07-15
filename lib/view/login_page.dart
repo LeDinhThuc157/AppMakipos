@@ -85,6 +85,10 @@ class _SignPageState extends State<SignPage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(name, data);
   }
+  savebool(var data, var name) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(name, data);
+  }
   // Read_() async {
   //   final SharedPreferences prefs = await SharedPreferences.getInstance();
   //   var counter = prefs.getString('List_Cell');
@@ -263,7 +267,19 @@ class _SignPageState extends State<SignPage> {
       );
       Map<String, dynamic> userMap = jsonDecode(response_user_login.toString());
       var token = userMap["accessToken"];
+      var roles = userMap['roles'];
+      var bool_admin = false;
+      for(int i =0; i <roles.length;i++){
+        print(roles[i]);
+        if(roles[i] == 'adminPartner'){
+          bool_admin = true;
+          break;
+        }
+      }
+      print("Status: ${roles.runtimeType} \n ${bool_admin}");
+
       if(response_user_login.statusCode == 201){
+        savebool(bool_admin,'bool_admin');
         save(nameController.text,'username');
         save(passwordController.text,'password');
         save(token, "Token");
@@ -273,27 +289,25 @@ class _SignPageState extends State<SignPage> {
           builder: (context) => Home(),
         ));
         print("Status: ${response_user_login.statusCode}");
-      }else{
-        AwesomeDialog(
-          context: context,
-          animType: AnimType.leftSlide,
-          headerAnimationLoop: false,
-          dialogType: DialogType.error,
-          showCloseIcon: true,
-          title: 'Đang nhập thất bại',
-          desc:
-          'Kiểm tra lại thông tin đăng nhập của bạn!',
-          btnOkOnPress: () {
-          },
-          btnOkIcon: Icons.check_circle,
-          onDismissCallback: (type) {
-          },
-        ).show();
       }
-
-
     } catch (e) {
-      print(e);
+      var x = e.toString();
+      print("Error ${x.substring(x.length-4,x.length-1)}");
+      AwesomeDialog(
+        context: context,
+        animType: AnimType.leftSlide,
+        headerAnimationLoop: false,
+        dialogType: DialogType.error,
+        showCloseIcon: true,
+        title: 'Đang nhập thất bại',
+        desc:
+        'Error: ${x.substring(x.length-4,x.length-1)}\nKiểm tra lại thông tin đăng nhập của bạn!',
+        btnOkOnPress: () {
+        },
+        btnOkIcon: Icons.check_circle,
+        onDismissCallback: (type) {
+        },
+      ).show();
     }
   }
   get_device(var token) async {
@@ -330,7 +344,7 @@ class _SignPageState extends State<SignPage> {
       save(cells_vol.toString(), "List_Cell");
       // saveList(userMap["propertiesValue"]["cells_vol"], "cells_vol");
       // bat_vol = userMap["propertiesValue"]["bat_vol"].toString();
-      save(userMap["propertiesValue"]["bat_vol"].toString(), "bat_vol");
+      save((userMap["propertiesValue"]["bat_vol"]*0.01).toStringAsFixed(2), "bat_vol");
       // bat_cap = userMap["propertiesValue"]["bat_cap"].toString();
       save(userMap["propertiesValue"]["bat_cap"].toString(), "bat_cap");
       // bat_capacity = userMap["propertiesValue"]["bat_capacity"].toString();
@@ -346,7 +360,7 @@ class _SignPageState extends State<SignPage> {
       // system_working_time = userMap["propertiesValue"]["logger_status"].toString();
       save(userMap["propertiesValue"]["logger_status"].toString(), "logger_status");
       save(userMap["propertiesValue"]["tube_temp"].toString(), "tube_temp");
-
+      save(userMap["propertiesValue"]["uptime"].toString(), "uptime");
       save(userMap["propertiesValue"]["charging_mos_switch"].toString(), "charging_mos_switch");
       save(userMap["propertiesValue"]["discharge_mos_switch"].toString(), "discharge_mos_switch");
       save(userMap["propertiesValue"]["active_equalization_switch"].toString(), "active_equalization_switch");
@@ -374,7 +388,7 @@ class _SignPageState extends State<SignPage> {
       // cell_diff = ((max - min)*0.001).toStringAsFixed(4);
       save(((max - min)*0.001).toStringAsFixed(4), "cell_diff");
       // ave_cell = (sum / (cells_vol.length)).toStringAsFixed(2);
-      save((sum / (cells_vol.length)).toStringAsFixed(2), "ave_cell");
+      save((sum * 0.001 / (cells_vol.length)).toStringAsFixed(3), "ave_cell");
 
       // Setting data
 

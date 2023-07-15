@@ -1,10 +1,13 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
+import 'package:makipos/main.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/custom_appbar.dart';
 
@@ -32,15 +35,8 @@ class _ControlPageState extends State<ControlPage> {
   var check_1 = false,check_2 = false;
 
   final dio = Dio();
-  @override
-  void initState(){
-    super.initState();
-    _Read();
-    MQTT("${name_device}");
-    // MQTT("${name_device}");
-  }
 
-  Future<void> _Read() async {
+  _Read() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     charge = prefs.getString('charging_mos_switch');
     discharge = prefs.getString('discharge_mos_switch');
@@ -49,7 +45,7 @@ class _ControlPageState extends State<ControlPage> {
     id = prefs.getString('Id_device');
     token = prefs.getString('Token');
     password = prefs.getString('password');
-    _SoSanh();
+    // _SoSanh();
     // print("charge: $charge \n discharge: $discharge");
     _Check_value();
 
@@ -76,7 +72,6 @@ class _ControlPageState extends State<ControlPage> {
         discharge = userMap["propertiesValue"]["discharge_mos_switch"].toString();
       }
     }catch(e){
-      print(e);
     }
   }
   void _Check_value(){
@@ -170,6 +165,70 @@ class _ControlPageState extends State<ControlPage> {
     //   print('');
     // });
   }
+   var _timer1;
+  var _timer2;
+
+  @override
+  void initState() {
+    super.initState();
+    _Read();
+    MQTT("${name_device}");
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      // Khi màn hình hiện tại đã được xây dựng
+      // Đăng ký lắng nghe sự kiện chuyển màn hình
+      final timerState = Provider.of<TimerState>(context, listen: false);
+      timerState.addListener(() {
+        if (!timerState.timerActive) {
+          print("Dung");
+          _stopTimer(); // Dừng Timer khi trạng thái thay đổi
+        }
+      });
+    });
+
+  }
+
+  @override
+  void dispose() {
+    _stopTimer(); // Gọi hàm dừng Timer trong hàm dispose()
+    super.dispose();
+  }
+
+  void startTimer_charge(final id,final propertyCode,bool _check) {
+    _timer1 = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      if (mounted) { // Kiểm tra nếu widget vẫn còn mounted (không bị hủy)
+        // Gọi hàm postDataControl() và save() ở đây
+        print("Hoat dong đi nha charge");
+        postDataControl(id, propertyCode, _check);
+        save(!_check ? "0" : "1", propertyCode);
+      }
+      print("${DateTime.now()} Time1");
+    });
+  }
+  void startTimer_discharge(final id,final propertyCode,bool _check) {
+    _timer2 = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      if (mounted) { // Kiểm tra nếu widget vẫn còn mounted (không bị hủy)
+        // Gọi hàm postDataControl() và save() ở đây
+        print("Hoat dong đi nha discharge");
+        postDataControl(id, propertyCode, _check);
+        save(!_check ? "0" : "1", propertyCode);
+      }
+      print("${DateTime.now()} Time2");
+    });
+  }
+  void _stopTimer() {
+    if (_timer1 != null) {
+      _timer1.cancel(); // Hủy Timer
+      _timer1 = null;
+      print("Huy Timer");
+    }
+    if (_timer2 != null) {
+      _timer2.cancel(); // Hủy Timer
+      _timer2 = null;
+      print("Huy Timer");
+    }
+
+  }
+
 
   Widget build(BuildContext context) {
 
@@ -260,9 +319,7 @@ class _ControlPageState extends State<ControlPage> {
                         onChanged: (bool value) {
                           setState(() {
                             isOn_charge_mqtt = value;
-                            // _Publish(widget.namedevice.toString(),"charging_mos_switch",isOn_charge_mqtt);
-                            postDataControl(id, "charging_mos_switch", isOn_charge_mqtt);
-                            save(!isOn_charge_mqtt ? "0" : "1", "charging_mos_switch");
+                            startTimer_charge(id,"charging_mos_switch",isOn_charge_mqtt);
                           });
                         }
                     )
@@ -288,9 +345,10 @@ class _ControlPageState extends State<ControlPage> {
                         onChanged: (bool value) {
                           setState(() {
                             isOn_charge = value;
-                            // _Publish(widget.namedevice.toString(),"charging_mos_switch",isOn_charge);
-                            postDataControl(id, "charging_mos_switch", isOn_charge);
-                            save(!isOn_charge ? "0" : "1", "charging_mos_switch");
+                            startTimer_charge(id,"charging_mos_switch",isOn_charge);
+
+                            // postDataControl(id, "charging_mos_switch", isOn_charge);
+                            // save(!isOn_charge ? "0" : "1", "charging_mos_switch");
                           });
                         }
                     )
@@ -320,9 +378,7 @@ class _ControlPageState extends State<ControlPage> {
                         onChanged: (bool value) {
                           setState(() {
                             isOn_discharge_mqtt = value;
-                            // _Publish(widget.namedevice.toString(),"discharge_mos_switch",isOn_discharge_mqtt);
-                            postDataControl(id, "discharge_mos_switch", isOn_discharge_mqtt);
-                            save(!isOn_discharge_mqtt ? "0" : "1", "discharge_mos_switch");
+                            startTimer_discharge(id,"discharge_mos_switch",isOn_discharge_mqtt);
                           });
                         }
                     )
@@ -348,9 +404,7 @@ class _ControlPageState extends State<ControlPage> {
                         onChanged: (bool value) {
                           setState(() {
                             isOn_discharge = value;
-                            // _Publish(widget.namedevice.toString(),"discharge_mos_switch",isOn_discharge);
-                            postDataControl(id, "discharge_mos_switch", isOn_discharge);
-                            save(!isOn_discharge ? "0" : "1", "discharge_mos_switch");
+                            startTimer_discharge(id,"discharge_mos_switch",isOn_discharge);
                           });
                         }
                     )
@@ -358,13 +412,11 @@ class _ControlPageState extends State<ControlPage> {
               ),
               Container(
                 height: 100*heightR,
-                child: ListView(
-                  padding: EdgeInsets.all(8),
-                  children: <Widget>[
-                    ListTile(title: Text("Modify PWD"), leading: Icon(Icons.lock),onTap: (){},),
-                  ],
-                ),
+                child: Center(
+                  child: Text("Version 1.0.0"),
+                )
               ),
+
             ],
           )
       ),
@@ -388,7 +440,7 @@ postDataControl(final id,final propertyCode,bool _check) async{
               "localId": "1",
               "data": !_check ? 0 : 1,
               "waitResponse": false,
-              "timeout": 1000
+              "timeout": 5000
             }
         )
     );

@@ -46,7 +46,7 @@ class _StatusPageState extends State<StatusPage> {
       balancebool = true;
     }
   }
-
+  var battery_capacity_settings;
   var bat_vol;
   var bat_cap;
   var bat_capacity;
@@ -57,7 +57,7 @@ class _StatusPageState extends State<StatusPage> {
   var uptime;
   var bat_current;
   var mos_temp;
-
+  String time_uptime = '';
   var ave_cell;
   var cell_diff;
   var last_update;
@@ -71,6 +71,7 @@ class _StatusPageState extends State<StatusPage> {
 
   Future<void> _Read() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+
     cells = prefs.getString('List_Cell')!.split(",");
     charge = prefs.getString('charging_mos_switch');
     discharge = prefs.getString('discharge_mos_switch');
@@ -83,12 +84,23 @@ class _StatusPageState extends State<StatusPage> {
     bat_cycles = prefs.getString('bat_cycles');
     box_temp = prefs.getString('box_temp');
     uptime = prefs.getString('uptime');
+
+    final int years = (int.parse(uptime) / 525600).floor();
+    final int remainingMinutes = int.parse(uptime)  % 525600;
+    final int months = (remainingMinutes / 43800).floor();
+    final int remainingMinutes2 = remainingMinutes % 43800;
+    final int days = (remainingMinutes2 / 1440).floor();
+    final int remainingMinutes3 = remainingMinutes2 % 1440;
+    final int hours = (remainingMinutes3 / 60).floor();
+    final int minutesRemaining = remainingMinutes3 % 60;
+    time_uptime = '$years''Y:$months''M:$days''D $hours''h:$minutesRemaining''m';
+
     mos_temp = prefs.getString('tube_temp');
     bat_current = prefs.getString('bat_current');
     cell_diff = prefs.getString('cell_diff');
     ave_cell = prefs.getString('ave_cell');
     last_update = prefs.getString('logger_status');
-
+    battery_capacity_settings = prefs.getString('battery_capacity_settings');
     Boolvalue();
     var cell1 = cells.toString();
     cell1 = cell1.substring(2,cell1.length-2);
@@ -112,7 +124,7 @@ class _StatusPageState extends State<StatusPage> {
         ),
         backgroundColor: Colors.black45,
         body: StreamBuilder(
-          stream: Stream.periodic(Duration(seconds: 1)).asyncMap((event) => _Read()).take(1),
+          stream: Stream.periodic(Duration(seconds: 1)).asyncMap((event) => _Read()),
           builder: (context, snapshot) => SingleChildScrollView(
             child: Column(
               children: [
@@ -206,7 +218,7 @@ class _StatusPageState extends State<StatusPage> {
                     children: [
                       Container(
                         child: Text(
-                          "$bat_vol mV",
+                          "$bat_vol V",
                           style: TextStyle(
                             color: Colors.greenAccent[400],
                             fontSize: 60*heightR,
@@ -262,7 +274,7 @@ class _StatusPageState extends State<StatusPage> {
                                       Text_Value(
                                         data: '$mos_temp°C',
                                       ),
-                                      Text_Value(data: '$bat_cap AH'),
+                                      Text_Value(data: '$battery_capacity_settings AH'),
                                       Text_Value(data: '$bat_capacity AH'),
                                       Text_Value(data: '$ave_cell V'),
                                       Text_Value(data: '$bat_temp °C'),
@@ -284,7 +296,7 @@ class _StatusPageState extends State<StatusPage> {
                                       // Text_Value(
                                       //     data:'Plugged'
                                       // ),
-                                      Text_Value(data: '$uptime'),
+                                      Text_Value(data: '$time_uptime'),
                                       Text_Value(data: '$last_update'),
                                     ],
                                   ),

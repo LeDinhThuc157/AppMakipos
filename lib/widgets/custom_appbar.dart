@@ -4,7 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:makipos/main.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../method/method_http.dart';
 import '../theme/colors.dart';
 import '../view/home.dart';
 import '../view/login_page.dart';
@@ -63,6 +66,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
         "discharge_mos_switch");
     save("0",
         "active_equalization_switch");
+    save('0','uptime');
     // charge = userMap["propertiesValue"]["charging_mos_switch"].toString();
     // discharge = userMap["propertiesValue"]["discharge_mos_switch"].toString();
     // balance = userMap["propertiesValue"]["active_equalization_switch"].toString();
@@ -149,6 +153,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
 
   @override
   Widget build(BuildContext context) {
+    final timerState = Provider.of<TimerState>(context, listen: false);
     double heightR, widthR;
     heightR = MediaQuery.of(context).size.height / 1080; //v26
     widthR = MediaQuery.of(context).size.width / 2400;
@@ -319,6 +324,8 @@ class _CustomAppbarState extends State<CustomAppbar> {
                 onSelected: (value) {
                   if (value == 'logout') {
                     _Delete();
+
+                    timerState.stopTimer();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -411,137 +418,138 @@ class _DrawerPageState extends State<DrawerPage> {
   }
 
 
-  get(String id_device) async {
-    try {
-      var responseGet_Listdevice = await dio.get(
-        "http://smarthome.test.makipos.net:3028/devices/$id_device",
-        options: Options(
-          headers: {"Authorization": token},
-        )
-      );
-      Map<String, dynamic> userMap = jsonDecode(responseGet_Listdevice.toString());
+  // get(String id_device) async {
+  //   try {
+  //     var responseGet_Listdevice = await dio.get(
+  //       "http://smarthome.test.makipos.net:3028/devices/$id_device",
+  //       options: Options(
+  //         headers: {"Authorization": token},
+  //       )
+  //     );
+  //     Map<String, dynamic> userMap = jsonDecode(responseGet_Listdevice.toString());
+  //
+  //     var cells_vol = userMap["propertiesValue"]["cells_vol"];
+  //     save(userMap["status"],"status_device");
+  //     save(cells_vol.toString(), "List_Cell");
+  //     // saveList(userMap["propertiesValue"]["cells_vol"], "cells_vol");
+  //     // bat_vol = userMap["propertiesValue"]["bat_vol"].toString();
+  //     save((userMap["propertiesValue"]["bat_vol"]*0.01).toStringAsFixed(2), "bat_vol");
+  //     // bat_cap = userMap["propertiesValue"]["bat_cap"].toString();
+  //     save(userMap["propertiesValue"]["bat_cap"].toString(), "bat_cap");
+  //     // bat_capacity = userMap["propertiesValue"]["bat_capacity"].toString();
+  //     save(userMap["propertiesValue"]["bat_capacity"].toString(),
+  //         "bat_capacity");
+  //     // bat_temp = userMap["propertiesValue"]["bat_temp"].toString();
+  //     save(userMap["propertiesValue"]["bat_temp"].toString(), "bat_temp");
+  //     // bat_percent = userMap["propertiesValue"]["bat_percent"].toString();
+  //     save(userMap["propertiesValue"]["bat_percent"].toString(), "bat_percent");
+  //     // bat_cycles = userMap["propertiesValue"]["bat_cycles"].toString();
+  //     save(userMap["propertiesValue"]["bat_cycles"].toString(), "bat_cycles");
+  //     // box_temp = userMap["propertiesValue"]["box_temp"].toString();
+  //     save(userMap["propertiesValue"]["box_temp"].toString(), "box_temp");
+  //     // system_working_time = userMap["propertiesValue"]["logger_status"].toString();
+  //     save(userMap["propertiesValue"]["logger_status"].toString(),
+  //         "logger_status");
+  //     save(userMap["propertiesValue"]["tube_temp"].toString(), "tube_temp");
+  //
+  //     save(userMap["propertiesValue"]["charging_mos_switch"].toString(),
+  //         "charging_mos_switch");
+  //     save(userMap["propertiesValue"]["discharge_mos_switch"].toString(),
+  //         "discharge_mos_switch");
+  //     save(userMap["propertiesValue"]["active_equalization_switch"].toString(),
+  //         "active_equalization_switch");
+  //     // charge = userMap["propertiesValue"]["charging_mos_switch"].toString();
+  //     // discharge = userMap["propertiesValue"]["discharge_mos_switch"].toString();
+  //     // balance = userMap["propertiesValue"]["active_equalization_switch"].toString();
+  //     // mos_temp = userMap["propertiesValue"]["tube_temp"].toString();
+  //     // bat_current = (int.parse(userMap["propertiesValue"]["bat_current"].toString()) * 0.01).toString();
+  //     save(
+  //         (int.parse(userMap["propertiesValue"]["bat_current"].toString()) *
+  //                 0.01)
+  //             .toString(),
+  //         "bat_current");
+  //     var min = cells_vol[0];
+  //     var max = cells_vol[0];
+  //     var sum = cells_vol.reduce((value, current) => value + current);
+  //     for (var i = 0; i < cells_vol.length; i++) {
+  //       // Calculate sum
+  //       // sum += cells_vol[i];
+  //       // Checking for largest value in the list
+  //       if (cells_vol[i] > max) {
+  //         max = cells_vol[i];
+  //       }
+  //       // Checking for smallest value in the list
+  //       if (cells_vol[i] < min) {
+  //         min = cells_vol[i];
+  //       }
+  //     }
+  //     // cell_diff = ((max - min)*0.001).toStringAsFixed(4);
+  //     save(((max - min) * 0.001).toStringAsFixed(4), "cell_diff");
+  //     // ave_cell = (sum / (cells_vol.length)).toStringAsFixed(2);
+  //     save((sum * 0.001 / (cells_vol.length)).toStringAsFixed(3), "ave_cell");
+  //
+  //     // Setting data
+  //
+  //     // _cellOVP = userMap["propertiesValue"]["single_overvoltage"].toString();
+  //     save(userMap["propertiesValue"]["single_overvoltage"].toString(),
+  //         "single_overvoltage");
+  //     // _cellOVPR = userMap["propertiesValue"]["monomer_overvoltage_recovery"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["monomer_overvoltage_recovery"].toString(),
+  //         "monomer_overvoltage_recovery");
+  //     // _cellUVPR = userMap["propertiesValue"]["discharge_overcurrent_protection_value"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["discharge_overcurrent_protection_value"]
+  //             .toString(),
+  //         "discharge_overcurrent_protection_value");
+  //     // _cellUVP = userMap["propertiesValue"]["differential_voltage_protection_value"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["differential_voltage_protection_value"]
+  //             .toString(),
+  //         "differential_voltage_protection_value");
+  //     // _continuedChargeCurr = userMap["propertiesValue"]["equalizing_opening_differential"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["equalizing_opening_differential"]
+  //             .toString(),
+  //         "equalizing_opening_differential");
+  //     // _continuedDischargeCurr = userMap["propertiesValue"]["charging_overcurrent_delay"].toString();
+  //     save(userMap["propertiesValue"]["charging_overcurrent_delay"].toString(),
+  //         "charging_overcurrent_delay");
+  //     // _dischargeOCPdelay = userMap["propertiesValue"]["equalizing_starting_voltage"].toString();
+  //     save(userMap["propertiesValue"]["equalizing_starting_voltage"].toString(),
+  //         "equalizing_starting_voltage");
+  //     // _chargeOTP = userMap["propertiesValue"]["high_temp_protect_bat_charge"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["high_temp_protect_bat_charge"].toString(),
+  //         "high_temp_protect_bat_charge");
+  //     // _dischargeOTP = userMap["propertiesValue"]["high_temp_protect_bat_discharge"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["high_temp_protect_bat_discharge"]
+  //             .toString(),
+  //         "high_temp_protect_bat_discharge");
+  //     // _chargeUTP = userMap["propertiesValue"]["charge_cryo_protect"].toString();
+  //     save(userMap["propertiesValue"]["charge_cryo_protect"].toString(),
+  //         "charge_cryo_protect");
+  //     // _chargeUTPR =  userMap["propertiesValue"]["recover_val_charge_cryoprotect"].toString();
+  //     save(
+  //         userMap["propertiesValue"]["recover_val_charge_cryoprotect"]
+  //             .toString(),
+  //         "recover_val_charge_cryoprotect");
+  //     // _startBalanceVolt = userMap["propertiesValue"]["tube_temp_protection"].toString();
+  //     save(userMap["propertiesValue"]["tube_temp_protection"].toString(),
+  //         "tube_temp_protection");
+  //     // _cellcount = userMap["propertiesValue"]["strings_settings"].toString();
+  //     save(userMap["propertiesValue"]["strings_settings"].toString(),
+  //         "strings_settings");
+  //     // _batterycapacity = userMap["propertiesValue"]["battery_capacity_settings"].toString();
+  //     save(userMap["propertiesValue"]["battery_capacity_settings"].toString(),
+  //         "battery_capacity_settings");
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   // Boolvalue();
+  // }
 
-      var cells_vol = userMap["propertiesValue"]["cells_vol"];
-      save(userMap["status"],"status_device");
-      save(cells_vol.toString(), "List_Cell");
-      // saveList(userMap["propertiesValue"]["cells_vol"], "cells_vol");
-      // bat_vol = userMap["propertiesValue"]["bat_vol"].toString();
-      save(userMap["propertiesValue"]["bat_vol"].toString(), "bat_vol");
-      // bat_cap = userMap["propertiesValue"]["bat_cap"].toString();
-      save(userMap["propertiesValue"]["bat_cap"].toString(), "bat_cap");
-      // bat_capacity = userMap["propertiesValue"]["bat_capacity"].toString();
-      save(userMap["propertiesValue"]["bat_capacity"].toString(),
-          "bat_capacity");
-      // bat_temp = userMap["propertiesValue"]["bat_temp"].toString();
-      save(userMap["propertiesValue"]["bat_temp"].toString(), "bat_temp");
-      // bat_percent = userMap["propertiesValue"]["bat_percent"].toString();
-      save(userMap["propertiesValue"]["bat_percent"].toString(), "bat_percent");
-      // bat_cycles = userMap["propertiesValue"]["bat_cycles"].toString();
-      save(userMap["propertiesValue"]["bat_cycles"].toString(), "bat_cycles");
-      // box_temp = userMap["propertiesValue"]["box_temp"].toString();
-      save(userMap["propertiesValue"]["box_temp"].toString(), "box_temp");
-      // system_working_time = userMap["propertiesValue"]["logger_status"].toString();
-      save(userMap["propertiesValue"]["logger_status"].toString(),
-          "logger_status");
-      save(userMap["propertiesValue"]["tube_temp"].toString(), "tube_temp");
-
-      save(userMap["propertiesValue"]["charging_mos_switch"].toString(),
-          "charging_mos_switch");
-      save(userMap["propertiesValue"]["discharge_mos_switch"].toString(),
-          "discharge_mos_switch");
-      save(userMap["propertiesValue"]["active_equalization_switch"].toString(),
-          "active_equalization_switch");
-      // charge = userMap["propertiesValue"]["charging_mos_switch"].toString();
-      // discharge = userMap["propertiesValue"]["discharge_mos_switch"].toString();
-      // balance = userMap["propertiesValue"]["active_equalization_switch"].toString();
-      // mos_temp = userMap["propertiesValue"]["tube_temp"].toString();
-      // bat_current = (int.parse(userMap["propertiesValue"]["bat_current"].toString()) * 0.01).toString();
-      save(
-          (int.parse(userMap["propertiesValue"]["bat_current"].toString()) *
-                  0.01)
-              .toString(),
-          "bat_current");
-      var min = cells_vol[0];
-      var max = cells_vol[0];
-      var sum = cells_vol.reduce((value, current) => value + current);
-      for (var i = 0; i < cells_vol.length; i++) {
-        // Calculate sum
-        // sum += cells_vol[i];
-        // Checking for largest value in the list
-        if (cells_vol[i] > max) {
-          max = cells_vol[i];
-        }
-        // Checking for smallest value in the list
-        if (cells_vol[i] < min) {
-          min = cells_vol[i];
-        }
-      }
-      // cell_diff = ((max - min)*0.001).toStringAsFixed(4);
-      save(((max - min) * 0.001).toStringAsFixed(4), "cell_diff");
-      // ave_cell = (sum / (cells_vol.length)).toStringAsFixed(2);
-      save((sum / (cells_vol.length)).toStringAsFixed(2), "ave_cell");
-
-      // Setting data
-
-      // _cellOVP = userMap["propertiesValue"]["single_overvoltage"].toString();
-      save(userMap["propertiesValue"]["single_overvoltage"].toString(),
-          "single_overvoltage");
-      // _cellOVPR = userMap["propertiesValue"]["monomer_overvoltage_recovery"].toString();
-      save(
-          userMap["propertiesValue"]["monomer_overvoltage_recovery"].toString(),
-          "monomer_overvoltage_recovery");
-      // _cellUVPR = userMap["propertiesValue"]["discharge_overcurrent_protection_value"].toString();
-      save(
-          userMap["propertiesValue"]["discharge_overcurrent_protection_value"]
-              .toString(),
-          "discharge_overcurrent_protection_value");
-      // _cellUVP = userMap["propertiesValue"]["differential_voltage_protection_value"].toString();
-      save(
-          userMap["propertiesValue"]["differential_voltage_protection_value"]
-              .toString(),
-          "differential_voltage_protection_value");
-      // _continuedChargeCurr = userMap["propertiesValue"]["equalizing_opening_differential"].toString();
-      save(
-          userMap["propertiesValue"]["equalizing_opening_differential"]
-              .toString(),
-          "equalizing_opening_differential");
-      // _continuedDischargeCurr = userMap["propertiesValue"]["charging_overcurrent_delay"].toString();
-      save(userMap["propertiesValue"]["charging_overcurrent_delay"].toString(),
-          "charging_overcurrent_delay");
-      // _dischargeOCPdelay = userMap["propertiesValue"]["equalizing_starting_voltage"].toString();
-      save(userMap["propertiesValue"]["equalizing_starting_voltage"].toString(),
-          "equalizing_starting_voltage");
-      // _chargeOTP = userMap["propertiesValue"]["high_temp_protect_bat_charge"].toString();
-      save(
-          userMap["propertiesValue"]["high_temp_protect_bat_charge"].toString(),
-          "high_temp_protect_bat_charge");
-      // _dischargeOTP = userMap["propertiesValue"]["high_temp_protect_bat_discharge"].toString();
-      save(
-          userMap["propertiesValue"]["high_temp_protect_bat_discharge"]
-              .toString(),
-          "high_temp_protect_bat_discharge");
-      // _chargeUTP = userMap["propertiesValue"]["charge_cryo_protect"].toString();
-      save(userMap["propertiesValue"]["charge_cryo_protect"].toString(),
-          "charge_cryo_protect");
-      // _chargeUTPR =  userMap["propertiesValue"]["recover_val_charge_cryoprotect"].toString();
-      save(
-          userMap["propertiesValue"]["recover_val_charge_cryoprotect"]
-              .toString(),
-          "recover_val_charge_cryoprotect");
-      // _startBalanceVolt = userMap["propertiesValue"]["tube_temp_protection"].toString();
-      save(userMap["propertiesValue"]["tube_temp_protection"].toString(),
-          "tube_temp_protection");
-      // _cellcount = userMap["propertiesValue"]["strings_settings"].toString();
-      save(userMap["propertiesValue"]["strings_settings"].toString(),
-          "strings_settings");
-      // _batterycapacity = userMap["propertiesValue"]["battery_capacity_settings"].toString();
-      save(userMap["propertiesValue"]["battery_capacity_settings"].toString(),
-          "battery_capacity_settings");
-    } catch (e) {
-      print(e);
-    }
-    // Boolvalue();
-  }
   List<String> _searchResult = [];
   onSearchTextChanged(String text) async {
     _searchResult.clear();
@@ -564,7 +572,7 @@ class _DrawerPageState extends State<DrawerPage> {
     double heightR, widthR;
     heightR = MediaQuery.of(context).size.height / 1080; //v26
     widthR = MediaQuery.of(context).size.width / 2400;
-
+    final timerState = Provider.of<TimerState>(context, listen: false);
 
     return StreamBuilder(
       stream:
@@ -616,6 +624,9 @@ class _DrawerPageState extends State<DrawerPage> {
                           children: [
                             TextButton(
                                 onPressed: () {
+                                  print("Dã ấn1");
+                                  timerState.stopTimer();
+                                  print("Dã ấn2");
                                   AwesomeDialog(
                                     context: context,
                                     animType: AnimType.leftSlide,
@@ -634,6 +645,7 @@ class _DrawerPageState extends State<DrawerPage> {
                                           MaterialPageRoute(
                                             builder: (context) => Home(),
                                           ));
+
                                     },
                                   ).show();
                                 },
@@ -678,6 +690,9 @@ class _DrawerPageState extends State<DrawerPage> {
                           children: [
                             TextButton(
                                 onPressed: () {
+                                  print("Dã ấn1");
+                                  timerState.stopTimer();
+                                  print("Dã ấn2");
                                   AwesomeDialog(
                                     context: context,
                                     animType: AnimType.leftSlide,

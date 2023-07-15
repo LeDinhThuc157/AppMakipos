@@ -26,6 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   var bat_cycles;
   var box_temp;
   var uptime;
+  String time_uptime = '';
   var bat_current;
   var mos_temp;
   var ave_cell;
@@ -90,6 +91,15 @@ class _SettingsPageState extends State<SettingsPage> {
     bat_cycles = prefs.getString('bat_cycles');
     box_temp = prefs.getString('box_temp');
     uptime = prefs.getString('uptime');
+    final int years = (int.parse(uptime) / 525600).floor();
+    final int remainingMinutes = int.parse(uptime)  % 525600;
+    final int months = (remainingMinutes / 43800).floor();
+    final int remainingMinutes2 = remainingMinutes % 43800;
+    final int days = (remainingMinutes2 / 1440).floor();
+    final int remainingMinutes3 = remainingMinutes2 % 1440;
+    final int hours = (remainingMinutes3 / 60).floor();
+    final int minutesRemaining = remainingMinutes3 % 60;
+    time_uptime = '$years''Y:$months''M:$days''D $hours''h:$minutesRemaining''m';
     mos_temp = prefs.getString('tube_temp');
     bat_current = prefs.getString('bat_current');
     cell_diff = prefs.getString('cell_diff');
@@ -135,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         backgroundColor: Colors.black45,
         body: StreamBuilder(
-          stream: Stream.periodic(Duration(seconds: 1)).asyncMap((event) => _Read()).take(1),
+          stream: Stream.periodic(Duration(seconds: 1)).asyncMap((event) => _Read()),
           builder: (context,snapshot) => SingleChildScrollView(
             child: Column(
               children: [
@@ -151,7 +161,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Container(
                         child: Text(
-                          "$bat_vol mV",
+                          "$bat_vol V",
                           style: TextStyle(
                             color: Colors.greenAccent[400],
                             fontSize: 60*heightR,
@@ -206,7 +216,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       Text_Value(
                                         data: '$mos_temp°C',
                                       ),
-                                      Text_Value(data: '$bat_cap AH'),
+                                      Text_Value(data: '$_batterycapacity AH'),
                                       Text_Value(data: '$bat_capacity AH'),
                                       Text_Value(data: '$ave_cell V'),
                                       Text_Value(data: '$bat_temp °C'),
@@ -228,7 +238,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       // Text_Value(
                                       //     data:'Plugged'
                                       // ),
-                                      Text_Value(data: '$uptime'),
+                                      Text_Value(data: '$time_uptime'),
                                       Text_Value(data: '$last_update'),
                                     ],
                                   ),
