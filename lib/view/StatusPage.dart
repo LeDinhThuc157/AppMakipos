@@ -109,6 +109,8 @@ class _StatusPageState extends State<StatusPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool _check_cells = false;
+    print("Cout: ${cells_vol.length ~/2}");
     double heightR, widthR;
     heightR = MediaQuery.of(context).size.height / 1080; //v26
     widthR = MediaQuery.of(context).size.width / 2400;
@@ -353,71 +355,250 @@ class _StatusPageState extends State<StatusPage> {
                         child: ListView.builder(
                             itemCount: cells_vol.length ~/ 2,
                             itemBuilder: (BuildContext context, int index) {
-                              return Column(
-                                children: [
-                                  SizedBox(
-                                    height: 40 * heightR,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                              int ss_index = index + 1;
+                              if(ss_index < cells_vol.length ~/ 2){
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 40 * heightR,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            "${2*index}",
+                                            style: TextStyle(
+                                                color: secondary,
+                                                fontSize: 25*heightR
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: blue,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          width: 60 * heightR,
+                                          alignment: Alignment.center,
+                                        ),
+                                        SizedBox(
+                                          width: 10 * heightR,
+                                        ),
+                                        Text(
+                                          "${cells_vol[2*index]} mV",
+                                          style: TextStyle(
+                                              color: green,
+                                              fontSize: 25*heightR
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 80 * heightR,
+                                        ),
+                                        Container(
+                                          child: Text(
+                                            "${2*index + 1}",
+                                            style: TextStyle(
+                                                color: secondary,
+                                                fontSize: 25*heightR
+                                            ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: blue,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          width: 60 * heightR,
+                                          alignment: Alignment.center,
+                                        ),
+                                        SizedBox(
+                                          width: 10 * heightR,
+                                        ),
+                                        Text(
+                                          "${cells_vol[2*index+1]} mV",
+                                          style: TextStyle(
+                                              color: green,
+                                              fontSize: 25*heightR
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                  ],
+                                );
+                              }else{
+                                if(cells_vol.length % 2 == 0){
+                                  return  Column(
                                     children: [
-                                      Container(
-                                        child: Text(
-                                          "${2*index}",
-                                          style: TextStyle(
-                                              color: secondary,
-                                              fontSize: 25*heightR
+                                      SizedBox(
+                                        height: 40 * heightR,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              "${2*index}",
+                                              style: TextStyle(
+                                                  color: secondary,
+                                                  fontSize: 25*heightR
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: blue,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            width: 60 * heightR,
+                                            alignment: Alignment.center,
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: blue,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        width: 60 * heightR,
-                                        alignment: Alignment.center,
-                                      ),
-                                      SizedBox(
-                                        width: 10 * heightR,
-                                      ),
-                                      Text(
-                                        "${cells_vol[2*index]} mV",
-                                        style: TextStyle(
-                                            color: green,
-                                            fontSize: 25*heightR
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 80 * heightR,
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          "${2*index + 1}",
-                                          style: TextStyle(
-                                              color: secondary,
-                                              fontSize: 25*heightR
+                                          SizedBox(
+                                            width: 10 * heightR,
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: blue,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        width: 60 * heightR,
-                                        alignment: Alignment.center,
+                                          Text(
+                                            "${cells_vol[2*index]} mV",
+                                            style: TextStyle(
+                                                color: green,
+                                                fontSize: 25*heightR
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 80 * heightR,
+                                          ),
+                                          Container(
+                                            child: Text(
+                                              "${2*index + 1}",
+                                              style: TextStyle(
+                                                  color: secondary,
+                                                  fontSize: 25*heightR
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: blue,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            width: 60 * heightR,
+                                            alignment: Alignment.center,
+                                          ),
+                                          SizedBox(
+                                            width: 10 * heightR,
+                                          ),
+                                          Text(
+                                            "${cells_vol[2*index+1]} mV",
+                                            style: TextStyle(
+                                                color: green,
+                                                fontSize: 25*heightR
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(
-                                        width: 10 * heightR,
-                                      ),
-                                      Text(
-                                        "${cells_vol[2*index+1]} mV",
-                                        style: TextStyle(
-                                            color: green,
-                                            fontSize: 25*heightR
-                                        ),
+                                        height: 80 * heightR,
                                       ),
                                     ],
-                                  ),
-                                ],
-                              );
+                                  );
+                                }else{
+                                  return  Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 40 * heightR,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              "${2*index}",
+                                              style: TextStyle(
+                                                  color: secondary,
+                                                  fontSize: 25*heightR
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: blue,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            width: 60 * heightR,
+                                            alignment: Alignment.center,
+                                          ),
+                                          SizedBox(
+                                            width: 10 * heightR,
+                                          ),
+                                          Text(
+                                            "${cells_vol[2*index]} mV",
+                                            style: TextStyle(
+                                                color: green,
+                                                fontSize: 25*heightR
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 80 * heightR,
+                                          ),
+                                          Container(
+                                            child: Text(
+                                              "${2*index + 1}",
+                                              style: TextStyle(
+                                                  color: secondary,
+                                                  fontSize: 25*heightR
+                                              ),
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: blue,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            width: 60 * heightR,
+                                            alignment: Alignment.center,
+                                          ),
+                                          SizedBox(
+                                            width: 10 * heightR,
+                                          ),
+                                          Text(
+                                            "${cells_vol[2*index+1]} mV",
+                                            style: TextStyle(
+                                                color: green,
+                                                fontSize: 25*heightR
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(left: 20*heightR,top: 40*heightR),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              child: Text(
+                                                "${2*(index+1)}",
+                                                style: TextStyle(
+                                                    color: secondary,
+                                                    fontSize: 25*heightR
+                                                ),
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: blue,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              width: 60 * heightR,
+                                              alignment: Alignment.center,
+                                            ),
+                                            SizedBox(
+                                              width: 10 * heightR,
+                                            ),
+                                            Text(
+                                              "${cells_vol[2*(index+1)]} mV",
+                                              style: TextStyle(
+                                                  color: green,
+                                                  fontSize: 25*heightR
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 80 * heightR,
+                                      ),
+                                    ],
+                                  );
+
+                                }
+
+                              }
+
                             }),
                       ),
 
